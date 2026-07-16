@@ -1,0 +1,63 @@
+fastapi
+uvicorn[standard]
+
+sqlalchemy
+
+psycopg2-binary
+
+alembic
+
+redis
+
+python-dotenv
+
+python-jose[cryptography]
+
+passlib[bcrypt]
+
+python-multipart
+
+pydantic
+
+pydantic-settings
+
+email-validator
+
+httpx
+
+pytest
+
+pytest-asyncio
+
+black
+
+isort
+
+flake8
+
+loguru
+
+
+#PHASE 1
+
+#CLONE REPOSITORY
+#git clone https://github.com/ham02zah/Fleetvision-AI.git
+
+#CREATE VIRTUAL EVNIRONMENT
+#python3 -m venv venv
+#source venv/bin/activate
+#pip install --upgrade pip
+
+#INSTALL REQUIREMENTS
+#pip install -r requirements.txt
+
+#RUN LOCALLY
+#source venv/bin/activate
+#uvicorn main:app --reload
+
+#DOCKER RUN
+#docker compose up --build
+#docker ps
+
+
+

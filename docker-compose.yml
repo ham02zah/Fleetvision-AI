@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+
+  api:
+    build: .
+    container_name: fleetvision-api
+
+    ports:
+      - "8000:8000"
+
+    env_file:
+      - .env
+
+    depends_on:
+      - db
+      - redis
+
+    volumes:
+      - .:/app
+
+  db:
+    image: postgres:16
+
+    container_name: fleetvision-postgres
+
+    restart: always
+
+    environment:
+      POSTGRES_USER: fleetuser
+
+      POSTGRES_PASSWORD: fleetpassword
+
+      POSTGRES_DB: fleetvision
+
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+
+    container_name: fleetvision-redis
+
+    ports:
+      - "6379:6379"
