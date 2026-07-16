@@ -7,6 +7,8 @@ from sqlalchemy import pool
 from app.core.config import settings
 from app.database.base import Base
 
+import app.models
+
 config = context.config
 
 config.set_main_option(
