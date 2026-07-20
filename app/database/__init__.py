@@ -1,11 +1,8 @@
-from app.database.base import Base
-from app.database.base_model import BaseModel
-from app.database.session import SessionLocal
-from app.database.session import engine
+from app.database.database import SessionLocal, engine
+from app.database.session import get_db
 
 __all__ = [
-    "Base",
-    "BaseModel",
-    "SessionLocal",
     "engine",
+    "SessionLocal",
+    "get_db",
 ]

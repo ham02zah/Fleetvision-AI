@@ -11,7 +11,6 @@ convention = {
 
 
 class Base(DeclarativeBase):
-
     metadata = MetaData(
         naming_convention=convention
     )
