@@ -2,9 +2,9 @@ from app.schemas.fleet import (
     FleetCreate,
     FleetListResponse,
     FleetResponse,
-    FleetSummary,
     FleetUpdate,
 )
+
 from app.schemas.user import (
     UserCreate,
     UserListResponse,
@@ -22,6 +22,5 @@ __all__ = [
     "FleetCreate",
     "FleetUpdate",
     "FleetResponse",
-    "FleetSummary",
     "FleetListResponse",
 ]

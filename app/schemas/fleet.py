@@ -1,28 +1,18 @@
 from __future__ import annotations
 
-from datetime import datetime
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
-class FleetBase(BaseModel):
+class FleetCreate(BaseModel):
     """
-    Shared fleet fields.
+    Request for creating a fleet.
     """
 
     name: str = Field(
-        ...,
         min_length=2,
-        max_length=100,
-        examples=["North Region Fleet"],
-    )
-
-    company_name: str = Field(
-        ...,
-        min_length=2,
-        max_length=150,
-        examples=["FleetVision Logistics"],
+        max_length=120,
     )
 
     description: str | None = Field(
@@ -30,72 +20,98 @@ class FleetBase(BaseModel):
         max_length=500,
     )
 
-    contact_email: EmailStr
-
-    contact_phone: str | None = Field(
-        default=None,
-        max_length=25,
+    company_name: str = Field(
+        min_length=2,
+        max_length=150,
     )
 
-    country: str = Field(
-    ...,
-    min_length=2,
-    max_length=80,
-    examples=["Pakistan"],
-)
+    contact_email: EmailStr | None = None
 
-    city: str = Field(
-    ...,
-    min_length=2,
-    max_length=80,
-    examples=["Islamabad"],
-)
+    contact_phone: str | None = None
 
-    timezone: str = Field(
-    default="UTC",
-    max_length=50,
-    examples=["Asia/Karachi"],
-)
+    address: str | None = None
 
+    country: str
 
-class FleetCreate(FleetBase):
-    """
-    Create fleet request.
-    """
-    pass
+    city: str
+
+    timezone: str
 
 
 class FleetUpdate(BaseModel):
     """
-    Update fleet request.
+    Request for updating a fleet.
     """
 
-    name: str | None = Field(default=None, min_length=2, max_length=100)
-    company_name: str | None = Field(default=None, min_length=2, max_length=150)
-    description: str | None = Field(default=None, max_length=500)
+    name: str | None = None
+
+    description: str | None = None
+
+    company_name: str | None = None
+
     contact_email: EmailStr | None = None
-    contact_phone: str | None = Field(default=None, max_length=25)
-    address: str | None = Field(default=None, max_length=255)
+
+    contact_phone: str | None = None
+
+    address: str | None = None
+
+    country: str | None = None
+
+    city: str | None = None
+
+    timezone: str | None = None
+
+    is_active: bool | None = None
 
 
-class FleetResponse(FleetBase):
+class FleetResponse(BaseModel):
     """
-    Fleet response model.
+    Fleet returned to clients.
     """
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+    )
 
     id: UUID
+
+    name: str
+
+    description: str | None
+
+    company_name: str
+
+    contact_email: EmailStr | None
+
+    contact_phone: str | None
+
+    address: str | None
+
+    country: str
+
+    city: str
+
+    timezone: str
+
     is_active: bool
-    created_at: datetime
-    updated_at: datetime
+
+class FleetListResponse(BaseModel):
+    """
+    List of fleets returned to clients.
+    """
+
+    fleets: list[FleetResponse]
+
+    total: int    
 
 class FleetSummary(BaseModel):
     """
-    Lightweight fleet information.
+    Lightweight fleet representation.
     """
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+    )
 
     id: UUID
 
@@ -103,13 +119,31 @@ class FleetSummary(BaseModel):
 
     company_name: str
 
+    city: str
+
+    country: str
+
     is_active: bool
+
 
 class FleetListResponse(BaseModel):
     """
-    Paginated fleet response.
+    Paginated fleet list.
     """
 
     total: int
 
-    fleets: list[FleetSummary]
+    fleets: list[FleetSummary]    
+
+class FleetListResponse(BaseModel):
+    """
+    Paginated fleet list.
+    """
+
+    total: int
+
+    skip: int
+
+    limit: int
+
+    fleets: list[FleetResponse]    

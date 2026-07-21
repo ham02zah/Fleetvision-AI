@@ -2,17 +2,24 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    Query,
+    status,
+)
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
 from app.schemas.fleet import (
     FleetCreate,
-    FleetUpdate,
-    FleetResponse,
     FleetListResponse,
+    FleetResponse,
+    FleetUpdate,
 )
 from app.services.fleet_service import FleetService
+
 
 router = APIRouter(
     prefix="/fleets",
@@ -30,7 +37,15 @@ def create_fleet(
     db: Session = Depends(get_db),
 ):
     service = FleetService(db)
-    return service.create_fleet(payload)
+
+    try:
+        return service.create_fleet(payload)
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(exc),
+        )
 
 
 @router.get(
@@ -42,7 +57,15 @@ def get_fleet(
     db: Session = Depends(get_db),
 ):
     service = FleetService(db)
-    return service.get_fleet(fleet_id)
+
+    try:
+        return service.get_fleet(fleet_id)
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )
 
 
 @router.get(
@@ -52,20 +75,20 @@ def get_fleet(
 def list_fleets(
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=100),
+    search: str | None = Query(None),
+    sort_by: str = Query("created_at"),
+    order: str = Query("desc"),
     db: Session = Depends(get_db),
 ):
     service = FleetService(db)
 
-    total, fleets = service.list_fleets(
+    return service.list_fleets(
         skip=skip,
         limit=limit,
+        search=search,
+        sort_by=sort_by,
+        order=order,
     )
-
-    return FleetListResponse(
-        total=total,
-        fleets=fleets,
-    )
-
 
 @router.put(
     "/{fleet_id}",
@@ -77,10 +100,18 @@ def update_fleet(
     db: Session = Depends(get_db),
 ):
     service = FleetService(db)
-    return service.update_fleet(
-        fleet_id,
-        payload,
-    )
+
+    try:
+        return service.update_fleet(
+            fleet_id,
+            payload,
+        )
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )
 
 
 @router.delete(
@@ -92,6 +123,12 @@ def delete_fleet(
     db: Session = Depends(get_db),
 ):
     service = FleetService(db)
-    service.delete_fleet(fleet_id)
 
-   
+    try:
+        service.delete_fleet(fleet_id)
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )

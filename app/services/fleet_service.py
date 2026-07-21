@@ -2,66 +2,59 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from sqlalchemy.orm import Session
-
-from app.exceptions import (
-    FleetAlreadyExistsError,
-    FleetNotFoundError,
-)
 from app.models.fleet import Fleet
 from app.repositories.fleet_repository import FleetRepository
-from app.schemas.fleet import (
-    FleetCreate,
-    FleetUpdate,
-)
+from app.schemas.fleet import FleetCreate, FleetUpdate
 
 
 class FleetService:
     """
-    Business logic for fleet management.
+    Fleet business logic.
     """
 
-    def __init__(self, db: Session):
-        self.repo = FleetRepository(db)
-
-    # --------------------------------------------------
-    # Create Fleet
-    # --------------------------------------------------
+    def __init__(self, db):
+        self.repository = FleetRepository(db)
 
     def create_fleet(
         self,
-        payload: FleetCreate,
+        request: FleetCreate,
     ) -> Fleet:
+        """
+        Create a new fleet.
+        """
 
-        if self.repo.exists(payload.name):
-            raise FleetAlreadyExistsError()
+        existing = self.repository.get_by_name(request.name)
+
+        if existing:
+            raise ValueError("A fleet with this name already exists.")
 
         fleet = Fleet(
-        name=payload.name,
-        company_name=payload.company_name,
-        description=payload.description,
-        contact_email=payload.contact_email,
-        contact_phone=payload.contact_phone,
-        country=payload.country,
-        city=payload.city,
-        timezone=payload.timezone,
-    )
+            name=request.name,
+            description=request.description,
+            company_name=request.company_name,
+            contact_email=request.contact_email,
+            contact_phone=request.contact_phone,
+            address=request.address,
+            country=request.country,
+            city=request.city,
+            timezone=request.timezone,
+            is_active=True,
+        )
 
-        return self.repo.create(fleet)
-
-    # --------------------------------------------------
-    # Read Fleet
-    # --------------------------------------------------
+        return self.repository.create(fleet)
 
     def get_fleet(
         self,
         fleet_id: UUID,
     ) -> Fleet:
+        """
+        Get a fleet by ID.
+        """
 
-        fleet = self.repo.get_by_id(fleet_id)
+        fleet = self.repository.get_by_id(fleet_id)
 
         if fleet is None:
-            raise FleetNotFoundError()
+            raise ValueError("Fleet not found.")
 
         return fleet
 
@@ -69,47 +62,57 @@ class FleetService:
         self,
         skip: int = 0,
         limit: int = 50,
-    ) -> tuple[int, list[Fleet]]:
+        search: str | None = None,
+        sort_by: str = "created_at",
+        order: str = "desc",
+    ):
+        """
+        List fleets with pagination, search, and sorting.
+        """
 
-        total = self.repo.count()
+        total = self.repository.count(search)
 
-        fleets = self.repo.get_all(
+        fleets = self.repository.list(
             skip=skip,
             limit=limit,
+            search=search,
+            sort_by=sort_by,
+            order=order,
         )
 
-        return total, fleets
-
-    # --------------------------------------------------
-    # Update Fleet
-    # --------------------------------------------------
+        return {
+            "total": total,
+            "skip": skip,
+            "limit": limit,
+            "fleets": fleets,
+        }
 
     def update_fleet(
         self,
         fleet_id: UUID,
-        payload: FleetUpdate,
+        request: FleetUpdate,
     ) -> Fleet:
+        """
+        Update an existing fleet.
+        """
 
         fleet = self.get_fleet(fleet_id)
 
-        update_data = payload.model_dump(
-            exclude_unset=True
-        )
+        data = request.model_dump(exclude_unset=True)
 
-        for field, value in update_data.items():
+        for field, value in data.items():
             setattr(fleet, field, value)
 
-        return self.repo.update(fleet)
-
-    # --------------------------------------------------
-    # Delete Fleet
-    # --------------------------------------------------
+        return self.repository.update(fleet)
 
     def delete_fleet(
         self,
         fleet_id: UUID,
     ) -> None:
+        """
+        Delete a fleet.
+        """
 
         fleet = self.get_fleet(fleet_id)
 
-        self.repo.delete(fleet)
+        self.repository.delete(fleet)

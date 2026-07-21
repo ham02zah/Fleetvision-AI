@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from sqlalchemy import func
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from app.models.fleet import Fleet
@@ -10,92 +10,117 @@ from app.models.fleet import Fleet
 
 class FleetRepository:
     """
-    Repository responsible for Fleet database operations.
+    Repository for Fleet database operations.
     """
 
     def __init__(self, db: Session):
         self.db = db
 
-    # --------------------------------------------------
-    # Create
-    # --------------------------------------------------
-
-    def create(
-        self,
-        fleet: Fleet,
-    ) -> Fleet:
+    def create(self, fleet: Fleet) -> Fleet:
+        """
+        Create a new fleet.
+        """
         self.db.add(fleet)
         self.db.commit()
         self.db.refresh(fleet)
         return fleet
 
-    # --------------------------------------------------
-    # Read
-    # --------------------------------------------------
-
     def get_by_id(
         self,
         fleet_id: UUID,
     ) -> Fleet | None:
-        return (
-            self.db.query(Fleet)
-            .filter(Fleet.id == fleet_id)
-            .first()
+        """
+        Get a fleet by its ID.
+        """
+        return self.db.get(
+            Fleet,
+            fleet_id,
         )
 
     def get_by_name(
         self,
         name: str,
     ) -> Fleet | None:
+        """
+        Get a fleet by its name.
+        """
         return (
             self.db.query(Fleet)
             .filter(Fleet.name == name)
             .first()
         )
 
-    def exists(
-        self,
-        name: str,
-    ) -> bool:
-        return self.get_by_name(name) is not None
-
-    def get_all(
+    def list(
         self,
         skip: int = 0,
         limit: int = 50,
+        search: str | None = None,
+        sort_by: str = "created_at",
+        order: str = "desc",
     ) -> list[Fleet]:
+        """
+        List fleets with optional search and sorting.
+        """
+
+        query = self.db.query(Fleet)
+
+        if search:
+            query = query.filter(
+                or_(
+                    Fleet.name.ilike(f"%{search}%"),
+                    Fleet.company_name.ilike(f"%{search}%"),
+                )
+            )
+
+        sort_column = getattr(Fleet, sort_by, Fleet.created_at)
+
+        if order.lower() == "asc":
+            query = query.order_by(sort_column.asc())
+        else:
+            query = query.order_by(sort_column.desc())
+
         return (
-            self.db.query(Fleet)
-            .offset(skip)
+            query.offset(skip)
             .limit(limit)
             .all()
         )
 
-    def count(self) -> int:
-        return (
-            self.db.query(func.count(Fleet.id))
-            .scalar()
-        )
+    def count(
+        self,
+        search: str | None = None,
+    ) -> int:
+        """
+        Count fleets with optional search.
+        """
+        query = self.db.query(Fleet)
 
-    # --------------------------------------------------
-    # Update
-    # --------------------------------------------------
+        if search:
+            query = query.filter(
+                or_(
+                    Fleet.name.ilike(f"%{search}%"),
+                    Fleet.company_name.ilike(f"%{search}%"),
+                )
+            )
+
+        return query.count()
 
     def update(
         self,
         fleet: Fleet,
     ) -> Fleet:
+        """
+        Update a fleet.
+        """
         self.db.commit()
         self.db.refresh(fleet)
         return fleet
-
-    # --------------------------------------------------
-    # Delete
-    # --------------------------------------------------
 
     def delete(
         self,
         fleet: Fleet,
     ) -> None:
+        """
+        Delete a fleet.
+        """
         self.db.delete(fleet)
         self.db.commit()
