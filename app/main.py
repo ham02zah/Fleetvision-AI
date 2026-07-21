@@ -4,7 +4,6 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.api.v1 import auth_router, users_router
 from app.core.config import settings
 from app.core.exception_handlers import register_exception_handlers
 from app.core.logging import logger
@@ -14,6 +13,7 @@ from app.api.v1 import (
     auth_router,
     users_router,
     fleet_router,
+    vehicle_router,
 )
 
 
@@ -99,4 +99,9 @@ app.include_router(
 app.include_router(
     fleet_router,
     prefix="/api/v1",
+)
+
+app.include_router(
+    vehicle_router,
+    prefix="/api/v1"
 )

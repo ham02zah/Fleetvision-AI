@@ -3,9 +3,11 @@ from __future__ import annotations
 from sqlalchemy import Boolean
 from sqlalchemy import Index
 from sqlalchemy import String
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column,
+    relationship,
+)
 
 from app.database.base_model import BaseModel
 
@@ -103,4 +105,10 @@ class Fleet(BaseModel):
         String(50),
         default="UTC",
         nullable=False,
+    )
+
+    vehicles = relationship(
+        "Vehicle",
+        back_populates="fleet",
+        cascade="all, delete-orphan",
     )
