@@ -9,11 +9,15 @@ from app.core.exception_handlers import register_exception_handlers
 from app.core.logging import logger
 from app.core.openapi import tags_metadata
 
+from app.api.v1.api import api_router
 from app.api.v1 import (
     auth_router,
     users_router,
     fleet_router,
     vehicle_router,
+    driver_router,
+    trip_router,
+    maintenance_router,
 )
 
 
@@ -85,23 +89,12 @@ async def health_check():
         "application": settings.APP_NAME,
     }
 
-
 app.include_router(
-    auth_router,
+    api_router,
     prefix="/api/v1",
 )
 
 app.include_router(
-    users_router,
+    maintenance_router,
     prefix="/api/v1",
-)
-
-app.include_router(
-    fleet_router,
-    prefix="/api/v1",
-)
-
-app.include_router(
-    vehicle_router,
-    prefix="/api/v1"
 )

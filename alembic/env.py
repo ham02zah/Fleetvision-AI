@@ -10,7 +10,7 @@ from app.database.base import Base
 import app.models.user
 import app.models.fleet
 import app.models.vehicle
-
+from app.models.driver import Driver
 
 config = context.config
 

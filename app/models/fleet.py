@@ -112,3 +112,15 @@ class Fleet(BaseModel):
         back_populates="fleet",
         cascade="all, delete-orphan",
     )
+
+    drivers = relationship(
+    "Driver",
+    back_populates="fleet",
+    cascade="all, delete-orphan",
+    )
+
+    trips = relationship(
+    "Trip",
+    back_populates="fleet",
+    cascade="all, delete-orphan",
+    ) 

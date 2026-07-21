@@ -74,3 +74,17 @@ class Vehicle(BaseModel):
         "Fleet",
         back_populates="vehicles",
     )
+
+    trips = relationship(
+        "Trip",
+        back_populates="vehicle",
+        cascade="all, delete-orphan",
+    )
+
+    maintenance_records = relationship(
+        "Maintenance",
+        back_populates="vehicle",
+        cascade="all, delete-orphan",
+    )
+
+    
