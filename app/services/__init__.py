@@ -5,6 +5,7 @@ from app.services.vehicle_service import VehicleService
 from app.services.driver_service import DriverService
 from app.services.trip_service import TripService
 from app.services.maintenance_service import MaintenanceService
+from app.services.vehicle_status_service import VehicleStatusService
 
 __all__ = [
     "AuthService",
@@ -14,4 +15,5 @@ __all__ = [
     "DriverService",
     "TripService",
     "MaintenanceService",
+    "VehicleStatusService",
 ]

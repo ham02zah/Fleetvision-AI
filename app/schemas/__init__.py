@@ -36,6 +36,13 @@ from app.schemas.maintenance import (
     MaintenanceListResponse,
 )
 
+from app.schemas.vehicle_status import (
+    VehicleStatusCreate,
+    VehicleStatusUpdate,
+    VehicleStatusResponse,
+    VehicleStatusListResponse,
+)
+
 __all__ = [
     # Users
     "UserCreate",
@@ -69,4 +76,9 @@ __all__ = [
     "MaintenanceUpdate",
     "MaintenanceResponse",
     "MaintenanceListResponse",
+
+    "VehicleStatusCreate",
+    "VehicleStatusUpdate",
+    "VehicleStatusResponse",
+    "VehicleStatusListResponse",
 ]

@@ -65,9 +65,8 @@ class Settings(BaseSettings):
     # Redis
     # =====================================================
 
-    REDIS_HOST: str
-
-    REDIS_PORT: int
+    REDIS_HOST: str = "redis"
+    REDIS_PORT: int = 6379
 
     # =====================================================
     # Twilio

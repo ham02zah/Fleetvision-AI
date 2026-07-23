@@ -87,4 +87,15 @@ class Vehicle(BaseModel):
         cascade="all, delete-orphan",
     )
 
-    
+    telemetry_records = relationship(
+    "Telemetry",
+    back_populates="vehicle",
+    cascade="all, delete-orphan",
+    )
+
+    status = relationship(
+    "VehicleStatus",
+    back_populates="vehicle",
+    uselist=False,
+    cascade="all, delete-orphan",
+    )

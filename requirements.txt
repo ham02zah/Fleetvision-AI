@@ -61,3 +61,4 @@ websockets==16.1
 pwdlib[argon2]
 PyJWT
 loguru
+redis[hiredis]==5.0.4

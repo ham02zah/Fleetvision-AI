@@ -5,6 +5,7 @@ from app.api.v1.vehicle import router as vehicle_router
 from app.api.v1.driver import router as driver_router
 from app.api.v1.trip import router as trip_router
 from app.api.v1.maintenance import router as maintenance_router
+from app.api.v1.vehicle_status import router as vehicle_status_router
 
 __all__ = [
     "auth_router",
@@ -14,4 +15,5 @@ __all__ = [
     "driver_router",
     "trip_router",
     "maintenance_router",
+    "vehicle_status_router",
 ]

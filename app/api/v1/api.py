@@ -10,6 +10,7 @@ from app.api.v1.trip import router as trip_router
 from app.api.v1.endpoints.database import router as database_router
 from app.api.v1.endpoints.health import router as health_router
 from app.api.v1.maintenance import router as maintenance_router
+from app.api.v1.vehicle_status import router as vehicle_status_router
 
 api_router = APIRouter()
 
@@ -27,3 +28,4 @@ api_router.include_router(driver_router)
 api_router.include_router(vehicle_router)
 api_router.include_router(trip_router)
 api_router.include_router(maintenance_router)
+api_router.include_router(vehicle_status_router)
