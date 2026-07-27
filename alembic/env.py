@@ -1,16 +1,21 @@
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from app.core.config import settings
 from app.database.base import Base
 
+# Import every model so Alembic discovers them
+
 import app.models.user
 import app.models.fleet
 import app.models.vehicle
-from app.models.driver import Driver
+import app.models.driver
+import app.models.trip
+import app.models.maintenance
+import app.models.vehicle_status
+import app.models.telemetry
 
 config = context.config
 
@@ -22,16 +27,13 @@ config.set_main_option(
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-
 target_metadata = Base.metadata
 
 
 def run_migrations_offline():
 
-    url = config.get_main_option("sqlalchemy.url")
-
     context.configure(
-        url=url,
+        url=config.get_main_option("sqlalchemy.url"),
         target_metadata=target_metadata,
         literal_binds=True,
         compare_type=True,
@@ -62,9 +64,6 @@ def run_migrations_online():
 
 
 if context.is_offline_mode():
-
     run_migrations_offline()
-
 else:
-
     run_migrations_online()

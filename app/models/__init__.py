@@ -7,6 +7,7 @@ from app.models.maintenance import Maintenance
 from app.models.telemetry import Telemetry
 from app.models.vehicle_status import VehicleStatus
 
+
 __all__ = [
     "User",
     "Fleet",

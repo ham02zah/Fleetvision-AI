@@ -1,14 +1,15 @@
-from uuid import uuid4
+from datetime import datetime, timezone
+from enum import Enum
+from uuid import UUID, uuid4
 
 from sqlalchemy import (
-    Float,
-    DateTime,
-    ForeignKey,
     Boolean,
+    DateTime,
+    Enum as SQLEnum,
+    Float,
+    ForeignKey,
 )
-
-from sqlalchemy.dialects.postgresql import UUID
-
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -16,22 +17,29 @@ from sqlalchemy.orm import (
 )
 
 from app.database.base import Base
-from app.database.mixins import TimestampMixin
 
 
-class Telemetry(Base, TimestampMixin):
+class VehicleState(str, Enum):
+    OFFLINE = "offline"
+    IDLE = "idle"
+    MOVING = "moving"
+    PARKED = "parked"
+
+
+class Telemetry(Base):
     __tablename__ = "telemetry"
 
     id: Mapped[UUID] = mapped_column(
-        UUID(as_uuid=True),
+        PG_UUID(as_uuid=True),
         primary_key=True,
         default=uuid4,
     )
 
     vehicle_id: Mapped[UUID] = mapped_column(
-        UUID(as_uuid=True),
+        PG_UUID(as_uuid=True),
         ForeignKey("vehicles.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
     )
 
     latitude: Mapped[float] = mapped_column(
@@ -46,52 +54,50 @@ class Telemetry(Base, TimestampMixin):
 
     speed: Mapped[float] = mapped_column(
         Float,
-        nullable=False,
+        default=0,
     )
 
-    engine_temperature: Mapped[float | None] = mapped_column(
+    heading: Mapped[float] = mapped_column(
         Float,
-        nullable=True,
+        default=0,
     )
 
-    fuel_level: Mapped[float | None] = mapped_column(
-        Float,
-        nullable=True,
-    )
-
-    battery_voltage: Mapped[float | None] = mapped_column(
-        Float,
-        nullable=True,
-    )
-
-    rpm: Mapped[float | None] = mapped_column(
-        Float,
-        nullable=True,
-    )
-
-    odometer: Mapped[float | None] = mapped_column(
-        Float,
-        nullable=True,
-    )
-
-    harsh_braking: Mapped[bool] = mapped_column(
-        Boolean,
-        default=False,
-    )
-
-    harsh_acceleration: Mapped[bool] = mapped_column(
-        Boolean,
-        default=False,
-    )
-
-    ignition_on: Mapped[bool] = mapped_column(
+    ignition: Mapped[bool] = mapped_column(
         Boolean,
         default=True,
     )
 
-    recorded_at: Mapped[DateTime] = mapped_column(
+    engine_running: Mapped[bool] = mapped_column(
+        Boolean,
+        default=True,
+    )
+
+    fuel: Mapped[float] = mapped_column(
+        Float,
+        default=100,
+    )
+
+    engine_temp: Mapped[float] = mapped_column(
+        Float,
+        default=85,
+    )
+
+    odometer: Mapped[float] = mapped_column(
+        Float,
+        default=0,
+    )
+
+    state: Mapped[VehicleState] = mapped_column(
+        SQLEnum(
+            VehicleState,
+            name="telemetry_state_enum",
+        ),
+        default=VehicleState.MOVING,
+    )
+
+    recorded_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        nullable=False,
+        default=lambda: datetime.now(timezone.utc),
     )
 
     vehicle = relationship(

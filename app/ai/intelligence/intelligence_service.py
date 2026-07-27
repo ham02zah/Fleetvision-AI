@@ -1,0 +1,142 @@
+from app.ai.inference.speed_predictor import predict_speed
+from app.ai.inference.risk_detector import detect_speed_risk
+from app.ai.services.maintenance_service import MaintenanceAIService
+from app.ai.intelligence.health_score import VehicleHealthScore
+from app.models.telemetry import Telemetry
+from app.ai.intelligence.driver_behavior import DriverBehaviorAnalyzer
+from app.ai.anomaly.anomaly_service import (AnomalyService,)
+from app.ai.recommendations.recommendation_engine import RecommendationEngine
+from app.ai.anomaly.advanced_anomaly_detector import AdvancedAnomalyDetector
+from app.ai.explainability.explanation_engine import (ExplainabilityEngine,)
+from app.ai.feature_engineering.feature_pipeline import (FeaturePipeline,)
+from app.ai.decision.decision_engine import AIDecisionEngine
+
+class AIIntelligenceService:
+    """
+    Central AI orchestration service.
+
+    Runs every AI module and combines the results into
+    one unified response.
+    """
+
+    @staticmethod
+    def analyze(
+        telemetry: Telemetry,
+        previous_speed: float = 0.0,
+    ):
+        """
+        Execute all available AI models.
+        """
+
+        # Speed Prediction
+        speed_prediction = predict_speed(
+            speed=telemetry.speed,
+            previous_speed=previous_speed,
+        )
+
+        # Risk Detection
+        risk_analysis = detect_speed_risk(
+            speed=telemetry.speed,
+            previous_speed=previous_speed,
+        )
+
+        # Maintenance Analysis
+        maintenance_analysis = MaintenanceAIService.analyze(
+            fuel=telemetry.fuel,
+            engine_temp=telemetry.engine_temp,
+            odometer=telemetry.odometer,
+            speed=telemetry.speed,
+        )
+
+        # Vehicle Health Score
+        health_analysis = VehicleHealthScore.calculate(
+            speed=telemetry.speed,
+            fuel=telemetry.fuel,
+            engine_temp=telemetry.engine_temp,
+            odometer=telemetry.odometer,
+            risk_level=risk_analysis["risk_level"],
+            maintenance_level=maintenance_analysis["maintenance_level"],
+        )
+
+        anomaly_analysis = AnomalyService.analyze(
+        speed=telemetry.speed,
+        previous_speed=previous_speed,
+        latitude=telemetry.latitude,
+        longitude=telemetry.longitude,
+        fuel=telemetry.fuel,
+        engine_temp=telemetry.engine_temp,
+        ignition=telemetry.ignition,
+        engine_running=telemetry.engine_running,
+       )
+
+        advanced_anomaly_analysis = AdvancedAnomalyDetector.analyze(
+        speed=telemetry.speed,
+        previous_speed=previous_speed,
+        latitude=telemetry.latitude,
+        longitude=telemetry.longitude,
+        fuel=telemetry.fuel,
+        engine_temp=telemetry.engine_temp,
+        ignition=telemetry.ignition,
+        engine_running=telemetry.engine_running,
+        )
+
+        driver_analysis = DriverBehaviorAnalyzer.analyze(
+        speed=telemetry.speed,
+        previous_speed=previous_speed,
+        fuel=telemetry.fuel,
+        engine_temp=telemetry.engine_temp,
+        )
+
+        recommendations = RecommendationEngine.generate(
+        speed=telemetry.speed,
+        fuel=telemetry.fuel,
+        engine_temp=telemetry.engine_temp,
+        risk_level=risk_analysis["risk_level"],
+        maintenance_level=maintenance_analysis["maintenance_level"],
+        health_status=health_analysis["status"],
+        driver_grade=driver_analysis["grade"],
+        )
+
+        decision = AIDecisionEngine.decide(
+        risk_level=risk_analysis["risk_level"],
+        maintenance_level=maintenance_analysis["maintenance_level"],
+        health_status=health_analysis["status"],
+        driver_grade=driver_analysis["grade"],
+        anomalies=anomaly_analysis["anomalies"],
+        )
+
+        explanations = ExplainabilityEngine.generate(
+        telemetry=telemetry,
+        risk_level=risk_analysis["risk_level"],
+        maintenance_level=maintenance_analysis[
+            "maintenance_level"
+        ],
+        health_score=health_analysis[
+            "health_score"
+        ],
+        driver_grade=driver_analysis[
+            "grade"
+        ],
+        anomalies=anomaly_analysis[
+            "anomalies"
+        ],
+        )
+
+        engineered_features = FeaturePipeline.process(
+        telemetry=telemetry,
+        previous_speed=previous_speed,
+        )
+        
+        return {
+            "speed_prediction": speed_prediction,
+            "risk_analysis": risk_analysis,
+            "maintenance_analysis": maintenance_analysis,
+            "vehicle_health": health_analysis,
+            "driver_score": driver_analysis,
+            "anomaly_analysis": anomaly_analysis,
+            "advanced_anomaly_analysis": advanced_anomaly_analysis,
+            "recommendations": recommendations,
+            "ai_decision": decision,
+            "explanations": {"explanations": explanations,},
+            "engineered_features": engineered_features,
+        }
