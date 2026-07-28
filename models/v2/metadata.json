@@ -1,0 +1,11 @@
+{
+    "training_time": "2026-07-28T12:09:53.262380",
+    "framework": "scikit-learn",
+    "algorithm": "RandomForestRegressor",
+    "metrics": {
+        "MAE": 0.01,
+        "RMSE": 0.014,
+        "R2": 1.0,
+        "MAPE": 0.04
+    }
+}

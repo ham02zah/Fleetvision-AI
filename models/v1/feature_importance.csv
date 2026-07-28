@@ -1,0 +1,11 @@
+Feature,Importance
+speed_change,0.9999932164104378
+speed_category_encoded,6.584811642059764e-06
+heading,5.38538113748171e-08
+longitude,5.126341526023034e-08
+latitude,5.109181633250551e-08
+hour,4.256887718002512e-08
+state,0.0
+engine_running,0.0
+ignition,0.0
+is_weekend,0.0

@@ -3,28 +3,43 @@ from pathlib import Path
 import joblib
 
 
-MODEL_PATH = Path("models/speed_prediction_model.pkl")
-
 _speed_model = None
 
 
 def load_speed_model():
-    """
-    Load the trained speed prediction model once
-    and keep it cached in memory.
-    """
 
     global _speed_model
 
-    if _speed_model is None:
+    if _speed_model is not None:
 
-        if not MODEL_PATH.exists():
-            raise FileNotFoundError(
-                f"Speed model not found: {MODEL_PATH}"
-            )
+        return _speed_model
 
-        _speed_model = joblib.load(MODEL_PATH)
+    latest_file = Path("models/latest.txt")
 
-        print("✓ Speed prediction model loaded.")
+    if latest_file.exists():
+
+        version = latest_file.read_text().strip()
+
+        model_path = (
+            Path("models")
+            / version
+            / "model.pkl"
+        )
+
+    else:
+
+        model_path = Path(
+            "models/speed_prediction_model.pkl"
+        )
+
+    _speed_model = joblib.load(model_path)
+
+    print()
+
+    print("Loaded Model")
+
+    print(model_path)
+
+    print()
 
     return _speed_model

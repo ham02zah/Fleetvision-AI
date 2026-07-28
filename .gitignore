@@ -1,27 +1,37 @@
-venv/
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
 
+# Virtual Environment
+venv/
 .env
 
-__pycache__/
+# IDE
+.vscode/
+.idea/
 
-*.pyc
-
-.pytest_cache
-
-.vscode
-
-.idea
-
+# macOS
 .DS_Store
 
+# Pytest
+.pytest_cache/
+
+# Coverage
 .coverage
+htmlcov/
 
-htmlcov
-
-*.sqlite3
-
-*.db
-
-alembic/versions/__pycache__
-
+# Logs
 *.log
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Model cache
+*.joblib
+
+# Environment files
+.env.*
+
+# Temporary files
+*.tmp
