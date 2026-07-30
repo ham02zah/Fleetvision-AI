@@ -119,7 +119,16 @@ class RecommendationEngine:
                 "Vehicle is operating normally."
             )
 
+        severity = "LOW"
+
+        if risk_level == "HIGH" or maintenance_level == "HIGH":
+            severity = "HIGH"
+
+        elif risk_level == "MEDIUM" or maintenance_level == "MEDIUM":
+            severity = "MEDIUM"
+
         return {
+            "severity": severity,
             "recommendations": recommendations,
             "total": len(recommendations),
         }

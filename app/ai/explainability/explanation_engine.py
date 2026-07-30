@@ -60,4 +60,10 @@ class ExplainabilityEngine:
                 t.NORMAL
             )
 
-        return explanations
+        return {
+
+        "count": len(explanations),
+
+        "items": explanations,
+
+        }

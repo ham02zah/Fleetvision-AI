@@ -1,69 +1,135 @@
 class DriverBehaviorAnalyzer:
     """
-    Driver behaviour scoring engine.
+    Analyzes driver behavior from telemetry data.
     """
 
     @staticmethod
     def analyze(
-        *,
-        speed: float,
-        previous_speed: float,
-        fuel: float,
-        engine_temp: float,
+        speed,
+        previous_speed=0.0,
+        fuel=None,
+        engine_temp=None,
     ):
+        """
+        Analyze driving style.
+
+        Returns driver grade,
+        score and behavior insights.
+        """
+
         score = 100
-        violations = []
 
-        acceleration = speed - previous_speed
+        issues = []
 
+
+        # Speed analysis
         if speed >= 100:
-            score -= 25
-            violations.append("Overspeed")
 
-        elif speed >= 80:
+            score -= 15
+
+            issues.append(
+                "High speed detected"
+            )
+
+
+        # Acceleration analysis
+
+        acceleration = (
+            speed - previous_speed
+        )
+
+
+        if acceleration > 20:
+
             score -= 10
 
-        if acceleration >= 20:
-            score -= 10
-            violations.append("Harsh acceleration")
+            issues.append(
+                "Harsh acceleration detected"
+            )
 
-        elif acceleration <= -20:
-            score -= 10
-            violations.append("Harsh braking")
 
-        if fuel < 20:
+        if acceleration < -20:
+
             score -= 5
-            violations.append("Low fuel")
 
-        if engine_temp >= 110:
-            score -= 10
-            violations.append("High engine temperature")
+            issues.append(
+                "Harsh braking detected"
+            )
 
-        score = max(0, min(score, 100))
+
+        # Fuel behavior
+
+        if fuel is not None:
+
+            if fuel < 15:
+
+                score -= 10
+
+                issues.append(
+                    "Low fuel level"
+                )
+
+
+        # Engine temperature
+
+        if engine_temp is not None:
+
+            if engine_temp > 110:
+
+                score -= 15
+
+                issues.append(
+                    "Engine overheating"
+                )
+
+
+        # Keep score valid
+
+        score = max(
+            score,
+            0
+        )
+
+
+        # Grade calculation
 
         if score >= 90:
+
             grade = "A"
-            behaviour = "SAFE"
+
+            behavior = "Excellent"
+
 
         elif score >= 75:
+
             grade = "B"
-            behaviour = "GOOD"
 
-        elif score >= 60:
+            behavior = "Good"
+
+
+        elif score >= 50:
+
             grade = "C"
-            behaviour = "AVERAGE"
 
-        elif score >= 40:
-            grade = "D"
-            behaviour = "AGGRESSIVE"
+            behavior = "Moderate"
+
 
         else:
-            grade = "F"
-            behaviour = "DANGEROUS"
+
+            grade = "D"
+
+            behavior = "Risky"
+
+
 
         return {
+
             "score": score,
+
             "grade": grade,
-            "behaviour": behaviour,
-            "violations": violations,
+
+            "behavior": behavior,
+
+            "issues": issues,
+
         }

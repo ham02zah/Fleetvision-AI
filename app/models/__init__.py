@@ -6,7 +6,8 @@ from app.models.trip import Trip
 from app.models.maintenance import Maintenance
 from app.models.telemetry import Telemetry
 from app.models.vehicle_status import VehicleStatus
-
+from app.models.alert import Alert
+from app.models.ai_prediction import AIPrediction
 
 __all__ = [
     "User",
@@ -17,4 +18,6 @@ __all__ = [
     "Maintenance",
     "Telemetry",
     "VehicleStatus",
+    "Alert",
+    "AIPrediction",
 ]

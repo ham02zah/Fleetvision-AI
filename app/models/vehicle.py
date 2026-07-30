@@ -93,6 +93,12 @@ class Vehicle(BaseModel):
     cascade="all, delete-orphan",
     )
 
+    alerts = relationship(
+    "Alert",
+    back_populates="vehicle",
+    cascade="all, delete-orphan",
+    )
+
     status = relationship(
     "VehicleStatus",
     back_populates="vehicle",

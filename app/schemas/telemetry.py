@@ -11,23 +11,11 @@ from app.models.telemetry import VehicleState
 # ==========================================================
 
 class TelemetryCreate(BaseModel):
-    """
-    Incoming telemetry payload.
-    """
 
     vehicle_id: UUID
 
-    latitude: float = Field(
-        ...,
-        ge=-90,
-        le=90,
-    )
-
-    longitude: float = Field(
-        ...,
-        ge=-180,
-        le=180,
-    )
+    latitude: float = Field(..., ge=-90, le=90)
+    longitude: float = Field(..., ge=-180, le=180)
 
     speed: float
     heading: float = 0
@@ -68,9 +56,7 @@ class TelemetryResponse(BaseModel):
 
     recorded_at: datetime
 
-    model_config = ConfigDict(
-        from_attributes=True
-    )
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ==========================================================
@@ -87,7 +73,7 @@ class SpeedPredictionResponse(BaseModel):
 
 
 # ==========================================================
-# Risk Analysis
+# Risk
 # ==========================================================
 
 class RiskAnalysisResponse(BaseModel):
@@ -132,12 +118,16 @@ class DriverBehaviorResponse(BaseModel):
 
     score: int
     grade: str
-    behaviour: str
-    violations: list[str]
+
+    # AI returns "behavior"
+    behavior: str
+
+    # AI returns "issues"
+    issues: list[str]
 
 
 # ==========================================================
-# Basic Anomaly Detector
+# Basic Anomaly
 # ==========================================================
 
 class AnomalyAnalysisResponse(BaseModel):
@@ -148,7 +138,7 @@ class AnomalyAnalysisResponse(BaseModel):
 
 
 # ==========================================================
-# Advanced Anomaly Detector
+# Advanced Anomaly
 # ==========================================================
 
 class AdvancedAnomalyResponse(BaseModel):
@@ -159,7 +149,7 @@ class AdvancedAnomalyResponse(BaseModel):
 
 
 # ==========================================================
-# Recommendation Engine
+# Recommendations
 # ==========================================================
 
 class RecommendationResponse(BaseModel):
@@ -168,7 +158,7 @@ class RecommendationResponse(BaseModel):
 
 
 # ==========================================================
-# Explainability AI
+# Explainability
 # ==========================================================
 
 class ExplainabilityResponse(BaseModel):
@@ -177,34 +167,45 @@ class ExplainabilityResponse(BaseModel):
 
 
 # ==========================================================
+# AI Decision
+# ==========================================================
+
+class AIDecisionResponse(BaseModel):
+
+    overall_status: str
+    priority: str
+    action: str
+    confidence: float
+    reason: list[str]
+
+
+# ==========================================================
 # Feature Engineering
 # ==========================================================
 
 class EngineeredFeaturesResponse(BaseModel):
 
-    speed: float
-    fuel: float
-    engine_temp: float
-    odometer: float
+    latitude: float
+    longitude: float
 
+    speed: float
+    heading: float
+
+    ignition: int
+    engine_running: int
+
+    previous_speed: float
+    speed_change: float
     acceleration: float
 
+    is_moving: int
+    is_speeding: int
     overspeed: int
-    low_fuel: int
-    overheating: int
     ignition_conflict: int
 
-    hour: float
 
-class AIDecisionResponse(BaseModel):
-    overall_status: str
-    priority: str
-    action: str
-    confidence: float
-    reason: list[str] 
-    
 # ==========================================================
-# Final AI Response
+# Final Response
 # ==========================================================
 
 class TelemetryPredictionResponse(BaseModel):
@@ -231,5 +232,4 @@ class TelemetryPredictionResponse(BaseModel):
 
     engineered_features: EngineeredFeaturesResponse
 
-
-   
+    generated_alerts: int

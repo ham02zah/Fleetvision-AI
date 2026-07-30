@@ -2,7 +2,7 @@ from app.ai.decision.decision_types import (
     DecisionPriority,
     VehicleDecision,
 )
-
+from datetime import datetime
 
 class AIDecisionEngine:
     """
@@ -121,6 +121,8 @@ class AIDecisionEngine:
 
             "confidence": confidence,
 
-            "reason": reasons,
+            "reasons": reasons,
+
+            "generated_at": datetime.utcnow().isoformat(),
 
         }
