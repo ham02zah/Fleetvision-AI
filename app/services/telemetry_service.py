@@ -32,6 +32,8 @@ class TelemetryService:
 
     Generates alerts.
 
+    Saves AI prediction.
+
     Returns AI analysis.
     """
 
@@ -73,11 +75,17 @@ class TelemetryService:
             telemetry=telemetry,
         )
 
+        # -----------------------------
+        # Run AI once
+        # -----------------------------
         ai_result = AIIntelligenceService.analyze(
             telemetry=telemetry,
             previous_speed=previous_speed,
         )
 
+        # -----------------------------
+        # Generate alerts
+        # -----------------------------
         alerts = AlertGenerationService.generate(
             db=db,
             vehicle_id=telemetry.vehicle_id,
@@ -87,15 +95,13 @@ class TelemetryService:
 
         ai_result["generated_alerts"] = len(alerts)
 
-        prediction = AIIntelligenceService.analyze(
-        telemetry=telemetry,
-        previous_speed=previous_speed,
-        )
-
+        # -----------------------------
+        # Save AI prediction
+        # -----------------------------
         AIPredictionService.save(
-        db=db,
-        telemetry=telemetry,
-        prediction=prediction,
+            db=db,
+            telemetry=telemetry,
+            prediction=ai_result,
         )
 
-        return prediction
+        return ai_result

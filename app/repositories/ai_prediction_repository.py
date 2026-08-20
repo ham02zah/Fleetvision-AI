@@ -11,11 +11,23 @@ class AIPredictionRepository:
         prediction: AIPrediction,
     ):
 
+        print("\nRepository.create()")
+
         db.add(prediction)
+
+        print("Added to session")
+
+        db.flush()
+
+        print("Flush successful")
 
         db.commit()
 
+        print("Commit successful")
+
         db.refresh(prediction)
+
+        print("Refresh successful")
 
         return prediction
 

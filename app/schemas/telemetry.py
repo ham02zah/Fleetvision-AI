@@ -84,6 +84,7 @@ class RiskAnalysisResponse(BaseModel):
     acceleration: float
     overspeed: bool
     risk_level: str
+    risk_score: int
     timestamp: str
 
 
@@ -96,6 +97,9 @@ class MaintenanceAnalysisResponse(BaseModel):
     maintenance_score: int
     maintenance_level: str
     service_required: bool
+    estimated_remaining_km: int
+    issues: list[str]
+    recommendation: str
     timestamp: str
 
 
@@ -118,11 +122,7 @@ class DriverBehaviorResponse(BaseModel):
 
     score: int
     grade: str
-
-    # AI returns "behavior"
     behavior: str
-
-    # AI returns "issues"
     issues: list[str]
 
 
@@ -132,8 +132,8 @@ class DriverBehaviorResponse(BaseModel):
 
 class AnomalyAnalysisResponse(BaseModel):
 
-    anomaly_count: int
     has_anomaly: bool
+    anomaly_count: int
     anomalies: list[str]
 
 
@@ -154,16 +154,24 @@ class AdvancedAnomalyResponse(BaseModel):
 
 class RecommendationResponse(BaseModel):
 
+    severity: str
     recommendations: list[str]
+    total: int
 
 
 # ==========================================================
 # Explainability
 # ==========================================================
 
+class ExplanationItems(BaseModel):
+
+    count: int
+    items: list[str]
+
+
 class ExplainabilityResponse(BaseModel):
 
-    explanations: list[str]
+    explanations: ExplanationItems
 
 
 # ==========================================================
@@ -176,7 +184,8 @@ class AIDecisionResponse(BaseModel):
     priority: str
     action: str
     confidence: float
-    reason: list[str]
+    reasons: list[str]
+    generated_at: str
 
 
 # ==========================================================
@@ -202,6 +211,8 @@ class EngineeredFeaturesResponse(BaseModel):
     is_speeding: int
     overspeed: int
     ignition_conflict: int
+
+    feature_count: int
 
 
 # ==========================================================

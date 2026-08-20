@@ -1,3 +1,4 @@
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -12,7 +13,9 @@ from app.core.openapi import tags_metadata
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("FleetVision AI starting...")
+
     yield
+
     logger.info("FleetVision AI shutting down...")
 
 
@@ -25,13 +28,33 @@ app = FastAPI(
     openapi_tags=tags_metadata,
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 register_exception_handlers(app)
+
+
+# ============================================================
+# API V1
+# ============================================================
 
 app.include_router(
     api_router,
     prefix="/api/v1",
 )
 
+
+# ============================================================
+# ROOT
+# ============================================================
 
 @app.get("/")
 async def root():
@@ -42,6 +65,10 @@ async def root():
     }
 
 
+# ============================================================
+# HEALTH
+# ============================================================
+
 @app.get("/health")
 async def health():
     return {
@@ -51,6 +78,10 @@ async def health():
 
 if __name__ == "__main__":
     print("\n===== ROUTES =====")
+
     for route in app.routes:
         if hasattr(route, "path"):
-            print(route.path)
+            print(
+                getattr(route, "methods", None),
+                route.path,
+            )

@@ -4,6 +4,9 @@ from app.repositories.dashboard_repository import (
     DashboardRepository,
 )
 
+from app.services.alert_dashboard_service import (
+    AlertDashboardService,
+)
 
 class DashboardService:
 
@@ -124,3 +127,23 @@ class DashboardService:
             for p in predictions
 
         ]
+
+ 
+    @staticmethod
+    def get_overview(db: Session):
+        """
+        Returns the complete dashboard overview
+        for the frontend.
+        """
+
+        return {
+            "summary": DashboardRepository.summary(db),
+            "speed_trend": DashboardService.speed_trend(db),
+            "health_trend": DashboardService.health_trend(db),
+            "leaderboard": DashboardService.leaderboard(db),
+            "risky_vehicles": DashboardService.risky_vehicles(db),
+            "decision_history": DashboardService.decision_history(db),
+            "alerts": AlertDashboardService.statistics(db),
+        }
+
+  

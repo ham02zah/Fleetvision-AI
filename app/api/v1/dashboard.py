@@ -139,3 +139,17 @@ def gps_route(
         db,
         vehicle_id,
     )
+
+
+# -------------------------
+# KPI DASHBOARD
+# -------------------------
+
+@router.get(
+    "/kpi",
+    summary="Fleet KPI Dashboard",
+)
+def dashboard_kpi(
+    db: Session = Depends(get_db),
+):
+    return AnalyticsService.fleet_summary(db)
