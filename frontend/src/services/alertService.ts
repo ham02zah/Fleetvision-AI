@@ -1,57 +1,77 @@
 import api from "./api";
 
 import type {
-  Alert,
+  FleetAlert,
 } from "../types/alert";
+
 
 export const alertService = {
 
-  async getAlerts(): Promise<Alert[]> {
+  // ============================================================
+  // GET ALL ALERTS
+  // ============================================================
+
+  async getAlerts(): Promise<FleetAlert[]> {
 
     const response =
-      await api.get(
-        "/alerts"
-      );
+      await api.get<
+        FleetAlert[]
+      >("/alerts");
 
-    const data = response.data;
-
-    if (Array.isArray(data)) {
-      return data;
-    }
-
-    if (Array.isArray(data?.items)) {
-      return data.items;
-    }
-
-    if (Array.isArray(data?.alerts)) {
-      return data.alerts;
-    }
-
-    return [];
+    return response.data;
   },
 
-  async getActiveAlerts(): Promise<Alert[]> {
+
+  // ============================================================
+  // GET ACTIVE ALERTS
+  // ============================================================
+
+  async getActiveAlerts(): Promise<FleetAlert[]> {
 
     const response =
-      await api.get(
-        "/alerts/status/active"
+      await api.get<
+        FleetAlert[]
+      >("/alerts/active");
+
+    return response.data;
+  },
+
+
+  // ============================================================
+  // GET SINGLE ALERT
+  // ============================================================
+
+  async getAlert(
+    alertId: string
+  ): Promise<FleetAlert> {
+
+    const response =
+      await api.get<FleetAlert>(
+        `/alerts/${alertId}`
       );
 
-    const data = response.data;
+    return response.data;
+  },
 
-    if (Array.isArray(data)) {
-      return data;
-    }
 
-    if (Array.isArray(data?.items)) {
-      return data.items;
-    }
+  // ============================================================
+  // UPDATE ALERT STATUS
+  // ============================================================
 
-    if (Array.isArray(data?.alerts)) {
-      return data.alerts;
-    }
+  async updateAlertStatus(
+    alertId: string,
+    status: string
+  ): Promise<FleetAlert> {
 
-    return [];
+    const response =
+      await api.patch<FleetAlert>(
+        `/alerts/${alertId}`,
+        {
+          status,
+        }
+      );
+
+    return response.data;
   },
 
 };

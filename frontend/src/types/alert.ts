@@ -1,25 +1,52 @@
-export interface Alert {
+// ============================================================
+// ALERT TYPES
+// ============================================================
+
+export type AlertSeverity =
+  | "Critical"
+  | "High"
+  | "Medium"
+  | "Low";
+
+export type AlertStatus =
+  | "Active"
+  | "Investigating"
+  | "Resolved";
+
+export type AlertCategory =
+  | "Safety"
+  | "Maintenance"
+  | "Driver"
+  | "Vehicle"
+  | "Performance";
+
+
+// ============================================================
+// ALERT
+// ============================================================
+
+export interface FleetAlert {
+
   id: string;
-  vehicle_id?: string;
+
+  vehicleId: string;
+
+  vehicleRegistration: string;
 
   title: string;
-  description?: string;
 
-  alert_type?: string;
-  severity?: string;
-  status?: string;
+  description: string;
 
-  is_resolved?: boolean;
+  severity: AlertSeverity;
 
-  created_at?: string;
-  updated_at?: string;
+  status: AlertStatus;
 
-  [key: string]: unknown;
-}
+  category: AlertCategory;
 
-export interface AlertListResponse {
-  items?: Alert[];
-  total?: number;
+  timestamp: string;
 
-  [key: string]: unknown;
+  recommendation: string;
+
+  component?: string;
+
 }
