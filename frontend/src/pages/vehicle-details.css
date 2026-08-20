@@ -1,0 +1,592 @@
+.vehicle-details-page {
+  width: 100%;
+}
+
+
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+
+.vehicle-details-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0;
+}
+
+
+.primary-button,
+.secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border-radius: 9px;
+
+  padding: 10px 16px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.primary-button {
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: white;
+}
+
+
+.primary-button:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+
+.secondary-button {
+  border: 1px solid #d1d5db;
+  background: white;
+  color: #374151;
+}
+
+
+.secondary-button:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+
+/* ============================================================
+   HERO
+   ============================================================ */
+
+.vehicle-hero-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  padding: 28px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+
+  background: white;
+
+  box-shadow:
+    0 4px 14px rgba(15, 23, 42, 0.05);
+}
+
+
+.vehicle-hero-icon {
+  width: 68px;
+  height: 68px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 14px;
+
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+
+.vehicle-hero-content {
+  flex: 1;
+}
+
+
+.vehicle-hero-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+
+.vehicle-overline {
+  display: block;
+
+  margin-bottom: 5px;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 0.08em;
+
+  color: #6b7280;
+}
+
+
+.vehicle-hero-title-row h2 {
+  margin: 0;
+
+  font-size: 26px;
+  font-weight: 700;
+
+  color: #111827;
+}
+
+
+.vehicle-hero-title-row p {
+  margin: 6px 0 0;
+
+  color: #6b7280;
+
+  font-size: 14px;
+}
+
+
+/* ============================================================
+   STATUS BADGES
+   ============================================================ */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 7px 11px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+
+.status-badge.active {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+
+.status-badge.inactive {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+
+/* ============================================================
+   INFORMATION GRID
+   ============================================================ */
+
+.vehicle-details-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 18px;
+
+  margin-top: 20px;
+}
+
+
+.vehicle-info-card {
+  padding: 22px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+
+  background: white;
+
+  box-shadow:
+    0 2px 8px rgba(15, 23, 42, 0.035);
+}
+
+
+.vehicle-info-card-header {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding-bottom: 18px;
+
+  border-bottom: 1px solid #f1f5f9;
+}
+
+
+.vehicle-section-icon {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: #f1f5f9;
+  color: #475569;
+}
+
+
+.vehicle-info-card-header h3 {
+  margin: 0;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  color: #111827;
+}
+
+
+.vehicle-info-card-header p {
+  margin: 3px 0 0;
+
+  font-size: 12px;
+
+  color: #6b7280;
+}
+
+
+/* ============================================================
+   VEHICLE DATA
+   ============================================================ */
+
+.vehicle-info-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 18px;
+
+  padding-top: 20px;
+}
+
+
+.vehicle-info-item {
+  min-width: 0;
+}
+
+
+.vehicle-info-item span,
+.fleet-meta span,
+.fleet-assignment span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  color: #6b7280;
+}
+
+
+.vehicle-info-item strong,
+.fleet-meta strong {
+  display: block;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  color: #111827;
+
+  word-break: break-word;
+}
+
+
+.vin-value {
+  font-family: monospace;
+
+  font-size: 12px !important;
+
+  letter-spacing: 0.02em;
+}
+
+
+/* ============================================================
+   FLEET
+   ============================================================ */
+
+.fleet-assignment {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  margin-top: 20px;
+
+  padding: 16px;
+
+  border-radius: 11px;
+
+  background: #f8fafc;
+}
+
+
+.fleet-assignment-icon {
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+}
+
+
+.fleet-assignment strong {
+  display: block;
+
+  font-size: 15px;
+
+  color: #111827;
+}
+
+
+.fleet-meta {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 15px;
+
+  margin-top: 18px;
+
+  padding-top: 18px;
+
+  border-top: 1px solid #f1f5f9;
+}
+
+
+/* ============================================================
+   STATUS PANEL
+   ============================================================ */
+
+.vehicle-status-panel {
+  padding-top: 20px;
+}
+
+
+.status-large {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  padding: 17px;
+
+  border-radius: 11px;
+}
+
+
+.status-large.active {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+
+.status-large.inactive {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+
+.status-large strong {
+  display: block;
+
+  font-size: 14px;
+}
+
+
+.status-large span {
+  display: block;
+
+  margin-top: 3px;
+
+  font-size: 12px;
+
+  color: #64748b;
+}
+
+
+/* ============================================================
+   IDENTIFIER
+   ============================================================ */
+
+.identifier-box {
+  margin-top: 20px;
+
+  padding: 16px;
+
+  border-radius: 10px;
+
+  background: #f8fafc;
+}
+
+
+.identifier-box span {
+  display: block;
+
+  margin-bottom: 7px;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  color: #6b7280;
+}
+
+
+.identifier-box code {
+  display: block;
+
+  font-size: 12px;
+
+  color: #334155;
+
+  word-break: break-all;
+}
+
+
+/* ============================================================
+   STATES
+   ============================================================ */
+
+.vehicle-details-loading,
+.vehicle-details-error {
+  min-height: 300px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 14px;
+
+  background: white;
+
+  color: #64748b;
+}
+
+
+.vehicle-details-error svg {
+  color: #dc2626;
+
+  margin-bottom: 10px;
+}
+
+
+.vehicle-details-error h2 {
+  margin: 0 0 5px;
+
+  color: #111827;
+}
+
+
+.vehicle-details-error p {
+  margin: 0 0 20px;
+
+  font-size: 14px;
+}
+
+
+.loading-spinner {
+  width: 30px;
+  height: 30px;
+
+  margin-bottom: 12px;
+
+  border: 3px solid #e5e7eb;
+
+  border-top-color: #2563eb;
+
+  border-radius: 50%;
+
+  animation: vehicle-spinner 0.8s linear infinite;
+}
+
+
+@keyframes vehicle-spinner {
+
+  to {
+    transform: rotate(360deg);
+  }
+
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 900px) {
+
+  .vehicle-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 640px) {
+
+  .vehicle-details-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+
+  .vehicle-details-actions button {
+    width: 100%;
+  }
+
+
+  .vehicle-hero-card {
+    align-items: flex-start;
+
+    padding: 20px;
+  }
+
+
+  .vehicle-hero-title-row {
+    flex-direction: column;
+  }
+
+
+  .vehicle-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .fleet-meta {
+    grid-template-columns: 1fr;
+  }
+
+}

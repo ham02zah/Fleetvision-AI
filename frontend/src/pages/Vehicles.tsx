@@ -8,6 +8,21 @@ import type {
   FormEvent,
 } from "react";
 
+import {
+  Search,
+  Plus,
+  Eye,
+  Pencil,
+  Trash2,
+  Car,
+  Fuel,
+  X,
+} from "lucide-react";
+
+import {
+  useNavigate,
+} from "react-router-dom";
+
 import PageHeader from "../components/common/PageHeader";
 
 import {
@@ -27,8 +42,12 @@ import type {
   Fleet,
 } from "../types/fleet";
 
+import "../components/fleet/fleet.css";
+
 
 function Vehicles() {
+
+  const navigate = useNavigate();
 
   const [vehicles, setVehicles] =
     useState<Vehicle[]>([]);
@@ -47,6 +66,12 @@ function Vehicles() {
 
   const [saving, setSaving] =
     useState(false);
+
+  const [search, setSearch] =
+    useState("");
+
+  const [statusFilter, setStatusFilter] =
+    useState("all");
 
 
   const [form, setForm] =
@@ -72,7 +97,6 @@ function Vehicles() {
       try {
 
         setLoading(true);
-
         setError(null);
 
         const data =
@@ -96,6 +120,7 @@ function Vehicles() {
         setLoading(false);
 
       }
+
     };
 
 
@@ -132,14 +157,13 @@ function Vehicles() {
   useEffect(() => {
 
     loadVehicles();
-
     loadFleets();
 
   }, []);
 
 
   // ============================================================
-  // FORM INPUT
+  // FORM CHANGE
   // ============================================================
 
   const handleChange =
@@ -168,7 +192,7 @@ function Vehicles() {
 
 
   // ============================================================
-  // FLEET SELECT
+  // FLEET CHANGE
   // ============================================================
 
   const handleFleetChange =
@@ -180,7 +204,6 @@ function Vehicles() {
       setForm(
         previous => ({
           ...previous,
-
           fleet_id:
             event.target.value,
         })
@@ -195,8 +218,7 @@ function Vehicles() {
 
   const handleCreate =
     async (
-      event:
-        FormEvent
+      event: FormEvent
     ) => {
 
       event.preventDefault();
@@ -217,10 +239,6 @@ function Vehicles() {
 
         await vehicleService.createVehicle(
           form
-        );
-
-        alert(
-          "Vehicle created successfully."
         );
 
         setShowForm(false);
@@ -259,7 +277,7 @@ function Vehicles() {
 
 
   // ============================================================
-  // DELETE VEHICLE
+  // DELETE
   // ============================================================
 
   const handleDelete =
@@ -300,247 +318,518 @@ function Vehicles() {
     };
 
 
+  // ============================================================
+  // FLEET NAME
+  // ============================================================
+
+  const getFleetName =
+    (
+      fleetId: string
+    ) => {
+
+      const fleet =
+        fleets.find(
+          item => item.id === fleetId
+        );
+
+      return fleet?.name || "Unknown Fleet";
+
+    };
+
+
+  // ============================================================
+  // FILTER VEHICLES
+  // ============================================================
+
+  const filteredVehicles =
+    vehicles.filter(
+      vehicle => {
+
+        const query =
+          search
+            .toLowerCase()
+            .trim();
+
+        const matchesSearch =
+          !query ||
+          vehicle.make
+            .toLowerCase()
+            .includes(query) ||
+          vehicle.model
+            .toLowerCase()
+            .includes(query) ||
+          vehicle.registration_number
+            .toLowerCase()
+            .includes(query) ||
+          vehicle.vin
+            .toLowerCase()
+            .includes(query) ||
+          getFleetName(
+            vehicle.fleet_id
+          )
+            .toLowerCase()
+            .includes(query);
+
+        const matchesStatus =
+          statusFilter === "all" ||
+          (
+            statusFilter === "active" &&
+            vehicle.is_active
+          ) ||
+          (
+            statusFilter === "inactive" &&
+            !vehicle.is_active
+          );
+
+        return (
+          matchesSearch &&
+          matchesStatus
+        );
+
+      }
+    );
+
+
+  const activeVehicles =
+    vehicles.filter(
+      vehicle => vehicle.is_active
+    ).length;
+
+
+  const inactiveVehicles =
+    vehicles.length -
+    activeVehicles;
+
+
   return (
 
-    <div>
+    <div className="vehicles-page">
+
+      {/* ======================================================
+          HEADER
+      ====================================================== */}
 
       <PageHeader
         title="Vehicles"
-        description="Monitor and manage fleet vehicles."
+        description="Monitor and manage all vehicles across your fleets."
       />
 
 
       {/* ======================================================
-          HEADER ACTIONS
+          SUMMARY
       ====================================================== */}
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginBottom: "20px",
-        }}
-      >
+      <div className="vehicle-summary-grid">
 
-        <button
-          onClick={() =>
-            setShowForm(
-              previous => !previous
-            )
-          }
-        >
+        <div className="vehicle-summary-card">
 
-          {showForm
-            ? "Cancel"
-            : "+ Add Vehicle"}
+          <div className="vehicle-summary-icon">
+            <Car size={20} />
+          </div>
 
-        </button>
+          <div>
+            <span>Total Vehicles</span>
+            <strong>
+              {vehicles.length}
+            </strong>
+          </div>
+
+        </div>
+
+
+        <div className="vehicle-summary-card">
+
+          <div className="vehicle-summary-icon active">
+            <Car size={20} />
+          </div>
+
+          <div>
+            <span>Active Vehicles</span>
+            <strong>
+              {activeVehicles}
+            </strong>
+          </div>
+
+        </div>
+
+
+        <div className="vehicle-summary-card">
+
+          <div className="vehicle-summary-icon inactive">
+            <Car size={20} />
+          </div>
+
+          <div>
+            <span>Inactive Vehicles</span>
+            <strong>
+              {inactiveVehicles}
+            </strong>
+          </div>
+
+        </div>
+
+
+        <div className="vehicle-summary-card">
+
+          <div className="vehicle-summary-icon">
+            <Fuel size={20} />
+          </div>
+
+          <div>
+            <span>Fleets</span>
+            <strong>
+              {fleets.length}
+            </strong>
+          </div>
+
+        </div>
 
       </div>
 
 
       {/* ======================================================
-          CREATE FORM
+          TOOLBAR
+      ====================================================== */}
+
+      <div className="vehicles-toolbar">
+
+        <div className="vehicle-search">
+
+          <Search size={18} />
+
+          <input
+            type="text"
+            placeholder="Search vehicles, registration, VIN or fleet..."
+            value={search}
+            onChange={
+              event =>
+                setSearch(
+                  event.target.value
+                )
+            }
+          />
+
+          {search && (
+
+            <button
+              className="search-clear"
+              onClick={() =>
+                setSearch("")
+              }
+            >
+
+              <X size={16} />
+
+            </button>
+
+          )}
+
+        </div>
+
+
+        <div className="vehicle-toolbar-actions">
+
+          <select
+            value={statusFilter}
+            onChange={
+              event =>
+                setStatusFilter(
+                  event.target.value
+                )
+            }
+          >
+
+            <option value="all">
+              All Status
+            </option>
+
+            <option value="active">
+              Active
+            </option>
+
+            <option value="inactive">
+              Inactive
+            </option>
+
+          </select>
+
+
+          <button
+            className="vehicle-add-button"
+            onClick={() =>
+              setShowForm(true)
+            }
+          >
+
+            <Plus size={18} />
+
+            Add Vehicle
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      {/* ======================================================
+          CREATE MODAL
       ====================================================== */}
 
       {showForm && (
 
-        <div
-          className="placeholder-card"
-          style={{
-            marginBottom: "24px",
-          }}
-        >
+        <div className="vehicle-modal-overlay">
 
-          <h2>
-            Add Vehicle
-          </h2>
+          <div className="vehicle-modal">
 
+            <div className="vehicle-modal-header">
 
-          <form
-            onSubmit={handleCreate}
-          >
+              <div>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns:
-                  "repeat(2, 1fr)",
-                gap: "16px",
-                marginTop: "20px",
-              }}
-            >
+                <h2>
+                  Add Vehicle
+                </h2>
 
+                <p>
+                  Register a new vehicle in your fleet.
+                </p>
 
-              {/* FLEET */}
+              </div>
 
-              <select
-                name="fleet_id"
-                value={
-                  form.fleet_id
-                }
-                onChange={
-                  handleFleetChange
-                }
-                required
-              >
-
-                <option value="">
-                  Select Fleet
-                </option>
-
-                {fleets.map(
-                  fleet => (
-
-                    <option
-                      key={fleet.id}
-                      value={fleet.id}
-                    >
-
-                      {fleet.name}
-
-                    </option>
-
-                  )
-                )}
-
-              </select>
-
-
-              {/* MAKE */}
-
-              <input
-                name="make"
-                placeholder="Make"
-                value={
-                  form.make
-                }
-                onChange={
-                  handleChange
-                }
-                required
-              />
-
-
-              {/* MODEL */}
-
-              <input
-                name="model"
-                placeholder="Model"
-                value={
-                  form.model
-                }
-                onChange={
-                  handleChange
-                }
-                required
-              />
-
-
-              {/* YEAR */}
-
-              <input
-                name="year"
-                type="number"
-                placeholder="Year"
-                value={
-                  form.year
-                }
-                onChange={
-                  handleChange
-                }
-                min="1980"
-                max="2100"
-                required
-              />
-
-
-              {/* REGISTRATION */}
-
-              <input
-                name="registration_number"
-                placeholder="Registration Number"
-                value={
-                  form.registration_number
-                }
-                onChange={
-                  handleChange
-                }
-                required
-              />
-
-
-              {/* VIN */}
-
-              <input
-                name="vin"
-                placeholder="VIN"
-                value={
-                  form.vin
-                }
-                onChange={
-                  handleChange
-                }
-                minLength={17}
-                maxLength={17}
-                required
-              />
-
-
-              {/* FUEL */}
-
-              <input
-                name="fuel_type"
-                placeholder="Fuel Type"
-                value={
-                  form.fuel_type
-                }
-                onChange={
-                  handleChange
-                }
-                required
-              />
-
-
-              {/* COLOR */}
-
-              <input
-                name="color"
-                placeholder="Color"
-                value={
-                  form.color ?? ""
-                }
-                onChange={
-                  handleChange
-                }
-              />
-
-            </div>
-
-
-            <div
-              style={{
-                marginTop: "20px",
-              }}
-            >
 
               <button
-                type="submit"
-                disabled={
-                  saving ||
-                  fleets.length === 0
+                className="modal-close"
+                onClick={() =>
+                  setShowForm(false)
                 }
               >
 
-                {saving
-                  ? "Creating..."
-                  : "Create Vehicle"}
+                <X size={20} />
 
               </button>
 
             </div>
 
-          </form>
+
+            <form
+              onSubmit={handleCreate}
+            >
+
+              <div className="vehicle-form-grid">
+
+                <div className="form-field">
+
+                  <label>
+                    Fleet
+                  </label>
+
+                  <select
+                    value={form.fleet_id}
+                    onChange={
+                      handleFleetChange
+                    }
+                    required
+                  >
+
+                    <option value="">
+                      Select Fleet
+                    </option>
+
+                    {fleets.map(
+                      fleet => (
+
+                        <option
+                          key={fleet.id}
+                          value={fleet.id}
+                        >
+                          {fleet.name}
+                        </option>
+
+                      )
+                    )}
+
+                  </select>
+
+                </div>
+
+
+                <div className="form-field">
+
+                  <label>
+                    Make
+                  </label>
+
+                  <input
+                    name="make"
+                    placeholder="e.g. Toyota"
+                    value={form.make}
+                    onChange={
+                      handleChange
+                    }
+                    required
+                  />
+
+                </div>
+
+
+                <div className="form-field">
+
+                  <label>
+                    Model
+                  </label>
+
+                  <input
+                    name="model"
+                    placeholder="e.g. Corolla"
+                    value={form.model}
+                    onChange={
+                      handleChange
+                    }
+                    required
+                  />
+
+                </div>
+
+
+                <div className="form-field">
+
+                  <label>
+                    Year
+                  </label>
+
+                  <input
+                    name="year"
+                    type="number"
+                    min="1980"
+                    max="2100"
+                    value={form.year}
+                    onChange={
+                      handleChange
+                    }
+                    required
+                  />
+
+                </div>
+
+
+                <div className="form-field">
+
+                  <label>
+                    Registration Number
+                  </label>
+
+                  <input
+                    name="registration_number"
+                    placeholder="e.g. ABC-123"
+                    value={
+                      form.registration_number
+                    }
+                    onChange={
+                      handleChange
+                    }
+                    required
+                  />
+
+                </div>
+
+
+                <div className="form-field">
+
+                  <label>
+                    VIN
+                  </label>
+
+                  <input
+                    name="vin"
+                    placeholder="17-character VIN"
+                    value={form.vin}
+                    onChange={
+                      handleChange
+                    }
+                    minLength={17}
+                    maxLength={17}
+                    required
+                  />
+
+                </div>
+
+
+                <div className="form-field">
+
+                  <label>
+                    Fuel Type
+                  </label>
+
+                  <input
+                    name="fuel_type"
+                    placeholder="e.g. Diesel"
+                    value={
+                      form.fuel_type
+                    }
+                    onChange={
+                      handleChange
+                    }
+                    required
+                  />
+
+                </div>
+
+
+                <div className="form-field">
+
+                  <label>
+                    Color
+                  </label>
+
+                  <input
+                    name="color"
+                    placeholder="e.g. White"
+                    value={
+                      form.color ?? ""
+                    }
+                    onChange={
+                      handleChange
+                    }
+                  />
+
+                </div>
+
+              </div>
+
+
+              <div className="vehicle-modal-footer">
+
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() =>
+                    setShowForm(false)
+                  }
+                >
+                  Cancel
+                </button>
+
+
+                <button
+                  type="submit"
+                  className="vehicle-add-button"
+                  disabled={
+                    saving ||
+                    fleets.length === 0
+                  }
+                >
+
+                  {saving
+                    ? "Creating..."
+                    : "Create Vehicle"}
+
+                </button>
+
+              </div>
+
+            </form>
+
+          </div>
 
         </div>
 
@@ -553,13 +842,21 @@ function Vehicles() {
 
       {error && (
 
-        <div
-          className="placeholder-card"
-        >
+        <div className="vehicle-state error">
+
+          <h3>
+            Unable to load vehicles
+          </h3>
 
           <p>
             {error}
           </p>
+
+          <button
+            onClick={loadVehicles}
+          >
+            Try Again
+          </button>
 
         </div>
 
@@ -570,14 +867,18 @@ function Vehicles() {
           LOADING
       ====================================================== */}
 
-      {loading && (
+      {loading && !error && (
 
-        <div
-          className="placeholder-card"
-        >
+        <div className="vehicle-state">
+
+          <Car size={32} />
+
+          <h3>
+            Loading vehicles...
+          </h3>
 
           <p>
-            Loading vehicles...
+            Fetching your fleet vehicles.
           </p>
 
         </div>
@@ -586,58 +887,78 @@ function Vehicles() {
 
 
       {/* ======================================================
-          TABLE
+          VEHICLE TABLE
       ====================================================== */}
 
       {!loading &&
         !error && (
 
-          <div
-            className="placeholder-card"
-          >
+          <div className="vehicle-table-card">
 
-            <h2>
-              Fleet Vehicles
-            </h2>
+            <div className="vehicle-table-header">
+
+              <div>
+
+                <h2>
+                  Fleet Vehicles
+                </h2>
+
+                <p>
+                  {filteredVehicles.length}
+                  {" "}
+                  vehicle
+                  {filteredVehicles.length !== 1
+                    ? "s"
+                    : ""}
+                  {" "}
+                  displayed
+                </p>
+
+              </div>
+
+            </div>
 
 
-            {vehicles.length === 0 ? (
+            {filteredVehicles.length === 0 ? (
 
-              <p>
-                No vehicles found.
-              </p>
+              <div className="vehicle-empty">
+
+                <Car size={42} />
+
+                <h3>
+                  No vehicles found
+                </h3>
+
+                <p>
+                  Try changing your search or add a new vehicle.
+                </p>
+
+              </div>
 
             ) : (
 
-              <div
-                style={{
-                  overflowX: "auto",
-                  marginTop: "20px",
-                }}
-              >
+              <div className="vehicle-table-wrapper">
 
-                <table
-                  style={{
-                    width: "100%",
-                    borderCollapse:
-                      "collapse",
-                  }}
-                >
+                <table className="vehicle-table">
 
                   <thead>
 
                     <tr>
 
                       <th>
+                        Vehicle
+                      </th>
+
+                      <th>
                         Registration
                       </th>
 
                       <th>
-                        Make
+                        Fleet
                       </th>
 
                       <th>
-                        Model
+                        Fuel
                       </th>
 
                       <th>
@@ -659,7 +980,7 @@ function Vehicles() {
 
                   <tbody>
 
-                    {vehicles.map(
+                    {filteredVehicles.map(
                       vehicle => (
 
                         <tr
@@ -669,82 +990,148 @@ function Vehicles() {
                         >
 
                           <td>
-                            {
-                              vehicle.registration_number
-                            }
+
+                            <div className="vehicle-name-cell">
+
+                              <div className="vehicle-avatar">
+
+                                <Car size={19} />
+
+                              </div>
+
+                              <div>
+
+                                <strong>
+                                  {vehicle.make}
+                                  {" "}
+                                  {vehicle.model}
+                                </strong>
+
+                                <span>
+                                  VIN: {vehicle.vin}
+                                </span>
+
+                              </div>
+
+                            </div>
+
                           </td>
 
-                          <td>
-                            {
-                              vehicle.make
-                            }
-                          </td>
-
-                          <td>
-                            {
-                              vehicle.model
-                            }
-                          </td>
-
-                          <td>
-                            {
-                              vehicle.year
-                            }
-                          </td>
-
-                          <td>
-                            {
-                              vehicle.is_active
-                                ? "Active"
-                                : "Inactive"
-                            }
-                          </td>
 
                           <td>
 
-                            {/* VIEW */}
+                            <span className="registration-badge">
 
-                            <button
-                              onClick={() =>
-                                window.location.href =
-                                  `/vehicles/${vehicle.id}`
+                              {
+                                vehicle.registration_number
                               }
-                            >
-                              View
-                            </button>
+
+                            </span>
+
+                          </td>
 
 
-                            {/* EDIT */}
+                          <td>
 
-                            <button
-                              style={{
-                                marginLeft:
-                                  "8px",
-                              }}
-                              onClick={() =>
-                                window.location.href =
-                                  `/vehicles/${vehicle.id}/edit`
-                              }
-                            >
-                              Edit
-                            </button>
+                            <span className="fleet-name">
 
-
-                            {/* DELETE */}
-
-                            <button
-                              style={{
-                                marginLeft:
-                                  "8px",
-                              }}
-                              onClick={() =>
-                                handleDelete(
-                                  vehicle.id
+                              {
+                                getFleetName(
+                                  vehicle.fleet_id
                                 )
                               }
+
+                            </span>
+
+                          </td>
+
+
+                          <td>
+                            {vehicle.fuel_type}
+                          </td>
+
+
+                          <td>
+                            {vehicle.year}
+                          </td>
+
+
+                          <td>
+
+                            <span
+                              className={
+                                vehicle.is_active
+                                  ? "status-badge active"
+                                  : "status-badge inactive"
+                              }
                             >
-                              Delete
-                            </button>
+
+                              <span className="status-dot" />
+
+                              {vehicle.is_active
+                                ? "Active"
+                                : "Inactive"}
+
+                            </span>
+
+                          </td>
+
+
+                          <td>
+
+                            <div className="vehicle-actions">
+
+                              {/* VIEW ONLY */}
+
+                              <button
+                                className="icon-button view"
+                                title="View vehicle"
+                                onClick={() =>
+                                  navigate(
+                                    `/vehicles/${vehicle.id}`
+                                  )
+                                }
+                              >
+
+                                <Eye size={17} />
+
+                              </button>
+
+
+                              {/* EDIT */}
+
+                              <button
+                                className="icon-button edit"
+                                title="Edit vehicle"
+                                onClick={() =>
+                                  navigate(
+                                    `/vehicles/${vehicle.id}/edit`
+                                  )
+                                }
+                              >
+
+                                <Pencil size={17} />
+
+                              </button>
+
+
+                              {/* DELETE */}
+
+                              <button
+                                className="icon-button delete"
+                                title="Delete vehicle"
+                                onClick={() =>
+                                  handleDelete(
+                                    vehicle.id
+                                  )
+                                }
+                              >
+
+                                <Trash2 size={17} />
+
+                              </button>
+
+                            </div>
 
                           </td>
 
@@ -769,5 +1156,6 @@ function Vehicles() {
 
   );
 }
+
 
 export default Vehicles;
